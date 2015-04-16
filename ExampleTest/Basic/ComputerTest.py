@@ -9,7 +9,7 @@ class CalculatorTest(unittest.TestCase):
         self.cal = Calculator()
     
     def test_add(self):
-        self.assertEqual(self.cal.add(1, 2), 3, 'test add func')
+        self.assertEqual(self.cal.add(1, 2), 5, 'test add func')
     
     def test_sub(self):
         self.assertEqual(self.cal.sub(5, 2), 3, 'test sub func')

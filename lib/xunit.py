@@ -50,7 +50,7 @@ class XUnitTestResult(object):
         # If params are passed to the test
         if "," in name:
             class_name = name
-
+        print 'status is %s' % status
         matched = False
         for suite in self.suites:
             if suite.name == class_name:
@@ -136,12 +136,14 @@ class XUnitTestSuite(object):
         test.name = name
         test.time = time
         test.params = params
+        
         if status == 'fail':
             error = XUnitTestCaseError()
             error.type = errorType
             error.message = errorMessage
             test.error = error
         self.tests.append(test)
+        
         if status == 'fail':
             self.failures += 1
             self.errors += 1

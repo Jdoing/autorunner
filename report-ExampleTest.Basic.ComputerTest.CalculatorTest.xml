@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<testsuite errors="1" failures="1" name="ExampleTest.Basic.ComputerTest.CalculatorTest" skip="0" tests="4" time="0">
+	<testcase name="ExampleTest.Basic.ComputerTest.CalculatorTest.test_add" time="0">
+		<error type="AssertionError">Traceback (most recent call last):
+  File &quot;/home/jiangyu/github/autorunner/ExampleTest/Basic/ComputerTest.py&quot;, line 12, in test_add
+    self.assertEqual(self.cal.add(1, 2), 5, 'test add func')
+AssertionError: test add func
+</error>
+	</testcase>
+	<testcase name="ExampleTest.Basic.ComputerTest.CalculatorTest.test_div" time="0"/>
+	<testcase name="ExampleTest.Basic.ComputerTest.CalculatorTest.test_mul" time="0"/>
+	<testcase name="ExampleTest.Basic.ComputerTest.CalculatorTest.test_sub" time="0"/>
+</testsuite>

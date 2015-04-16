@@ -20,11 +20,6 @@ def main():
     #parse command line args
     argParser = ArgParser()
     argParser.parse(sys.argv)
-    
-    Logger.createLogDir()
-    
-    xmlresult = XUnitTestResult()
-    
 
     try:
         runner = Runner()
@@ -32,7 +27,7 @@ def main():
         if argParser.options.casename:
             casename = argParser.options.casename
             runner.executeByCaseName(casename)
-            print runner.result
+            #print runner.result
     except Exception, e:
         log.error('run error: %s' % e)
 
