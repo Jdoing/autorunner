@@ -19,11 +19,4 @@ class ArgParser(object):
     
     def parse(self, argv):
         self.addArgs()
-        (self.options, self.args) = self.parser.parse_args(argv)
-
-
-class ConfParser(object):
-    def parseConf(self, filename):
-        f = open(filename, 'r')
-        return f.readlines()
-        
+        (self.options, self.args) = self.parser.parse_args(argv)       

@@ -1,9 +1,10 @@
 import sys, os
 import unittest
+import time
 import os.path as Path
 sys.path.append("..")
 from xunit import XUnitTestResult
-
+from util import Logger
 
 class Case(object):
     def __init__(self, name, time=0, errorType=None, errorMessage=None, status='pass', params=''):
@@ -56,9 +57,10 @@ class Runner(object):
                     self.writeReport(case)
 
     def writeReport(self, case):
+        str_time = time.strftime("%y-%b-%d_%H-%M-%S", time.localtime())
+        log_dir_path = Logger.create_log_dir()
         self.result.add_test(**case.__dict__)
-        
-        self.result.write('report')
+        self.result.write("{0}{2}report-{1}".format(log_dir_path, str_time, os.sep))
         
     
     def executeByConf(self, confName):
