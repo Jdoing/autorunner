@@ -8,13 +8,10 @@ import signal
 if sys.hexversion < 0x02060000:
     print "Testrunner requires version 2.6+ of python"
     sys.exit()
-from util import Logger
-from util.Parser import ArgParser
-from TestRunner.Runner import Runner
+from util import logger
+from util.parser import ArgParser
+from testrunner.runner import Runner
 from xunit import XUnitTestResult
-
-logging.config.fileConfig(os.path.join(os.getcwd(), 'selfconf', 'logging.conf'))
-log = logging.getLogger('SNTF')
 
 def main():
     #parse command line args
@@ -27,9 +24,11 @@ def main():
         if argParser.options.casename:
             casename = argParser.options.casename
             runner.executeByCaseName(casename)
-            #print runner.result
+        if argParser.options.confname:
+            runner.executeByConf(argParser.options.confname)
+        
     except Exception, e:
-        log.error('run error: %s' % e)
+        print('run error: %s' % e)
 
 
 
@@ -46,7 +45,7 @@ if __name__ == '__main__':
                 os.kill(child, signal.SIGKILL)
             except OSError:
                 pass
-            except OSError:
+        except OSError:
                 pass
     sys.exit()
 

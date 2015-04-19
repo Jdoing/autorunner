@@ -4,17 +4,9 @@ import time
 import os.path as Path
 sys.path.append("..")
 from xunit import XUnitTestResult
-from util import Logger
-
-class Case(object):
-    def __init__(self, name, time=0, errorType=None, errorMessage=None, status='pass', params=''):
-        self.name = name
-        self.time = time
-        self.errorType = errorType
-        self.errorMessage = errorMessage
-        self.status = status
-        self.params = params
-
+from util import logger
+from config import *
+from TestInput import TestInputSingleton
 
 class Runner(object):
     def __init__(self, verbose = 2):
@@ -58,20 +50,21 @@ class Runner(object):
 
     def writeReport(self, case):
         str_time = time.strftime("%y-%b-%d_%H-%M-%S", time.localtime())
-        log_dir_path = Logger.create_log_dir()
+        log_dir_path = logger.create_log_dir()
         self.result.add_test(**case.__dict__)
         self.result.write("{0}{2}report-{1}".format(log_dir_path, str_time, os.sep))
-        
+    
     
     def executeByConf(self, confName):
         if not Path.isfile(confName):
             sys.exit("confName {0} was not found".format(confName))
         else:
-            casenames = []
-            confile = open(confName)
-            for case in confile.readlines():
-                _case = case.strip()
-                casenames.append(_case)
+            caseconf = CaseConfig()
+            caseconf.parse_config(confName)
+            
+            TestInputSingleton.caseconf = caseconf
+            
+            casenames = [case.name for case in caseconf.cases]
             self.suite = self.testLoader.loadTestsFromNames(casenames)
             self._executeTest(self.suite)
 

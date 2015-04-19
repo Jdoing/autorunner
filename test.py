@@ -1,10 +1,12 @@
 #!/usr/bin/python
 import os, sys
-from lib import GlobalSet
+import json
+
 #from lib.TestRunner.Runner import Runner
+line = 'ExampleTest.Basic.ComputerTest.CalculatorTest.test_add, params={"x":2, "y":3}'
+string = 'params={"x":2, "y":3}'
+split_string = string.split('=', 1)
 
-db = [('db_host', '127.0.0.1'), ('db_port', '22'), ('db_user', 'root'), ('db_pass', 'rootroot')]
+j_str = json.loads(split_string[1])
 
-print map(lambda t : t[1], db)
-
-print zip('abc', '123')
+print j_str

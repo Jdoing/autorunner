@@ -76,7 +76,7 @@ class XUnitTestResult(object):
         testsuite.setAttribute('skip', str(suite.skips))
         for testobject in suite.tests:
             testcase = doc.createElement('testcase')
-            full_name = testobject.name+testobject.params
+            full_name = testobject.name+ str(testobject.params)
             testcase.setAttribute('name', full_name)
             testcase.setAttribute('time', str(testobject.time))
             if testobject.error:
