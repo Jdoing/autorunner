@@ -4,7 +4,7 @@ import re
 
 if os.getenv('SNTF_HOME'):
     sys.path.append(os.getenv('SNTF_HOME'))
-    from lib.config import CaseConfig
+    from lib.config import CaseConfig, SysConfig
 else:
     sys.exit('SNTF_HOME is not set')
 
@@ -17,6 +17,12 @@ class CaseConfigTest(unittest.TestCase):
         conf.parse_config(conf_path)
         print conf
         #self.assertIn(conf.
-        
+
+class SysConfigTest(unittest.TestCase):
+    def test_parseConfig(self):
+        conf = SysConfig()
+        conf_path = r'/home/jiangyu/github/autorunner/sysconf/multiple.ini'
+        conf.parseConfig(conf_path)
+
 if __name__ == '__main__':
     unittest.main()

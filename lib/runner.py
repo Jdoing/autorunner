@@ -38,7 +38,36 @@ class Runner(object):
         log.debug('_update_sys_conf ')
         TestInputSingleton.servers = conf.servers
     
+    '''
+    def executeByCaseName(self, casename):
+        #case = Path.basename(casename)
+        #self.suite = self.testLoader.loadTestsFromName(casename)
+        self.getTestCaseByCaseName(casename)
+        
+        for case in self.tests:
+            try:
+                #load test case
+                self.suite = self.testLoader.loadTestsFromName(case.name)
+            except AttributeError:
+                raise
+            else:
+                try:
+                    #run test case
+                    self._executeTest(self.suite)
+                except Exception as ex:
+                    case.status = 'fail'
+                    case.errorType = 'AssertionError'
+                    case.errorMessage = str(ex)
 
+                finally:
+                    #write report
+                    if self.result.errors or self.result.failures:
+                        case.status = 'fail'
+                        case.errorType = 'AssertionError'
+                        #print 'result  self.result.errors
+                        case.errorMessage = self.result.failures[0][1]
+                    self.writeReport(case)
+    '''
     
     def writeReport(self, case):
         str_time = time.strftime("%y-%b-%d_%H-%M-%S", time.localtime())
@@ -95,7 +124,11 @@ class Runner(object):
             return caseconf
 
         
-
+    '''
+    def _executeTest(self, suite):
+        self.result = self.runner.run(suite)
+    '''
+    
     def getTestCaseByCaseName(self, name):
         if name.find('*') > 0:
             prefix = ".".join(name.split(".")[0:-1])
@@ -121,36 +154,7 @@ class Runner(object):
             self.suite = self.testLoader.loadTestsFromNames(casenames)
             self._executeTest(self.suite)
     '''
-    '''
-    def executeByCaseName(self, casename):
-        #case = Path.basename(casename)
-        #self.suite = self.testLoader.loadTestsFromName(casename)
-        self.getTestCaseByCaseName(casename)
-        
-        for case in self.tests:
-            try:
-                #load test case
-                self.suite = self.testLoader.loadTestsFromName(case.name)
-            except AttributeError:
-                raise
-            else:
-                try:
-                    #run test case
-                    self._executeTest(self.suite)
-                except Exception as ex:
-                    case.status = 'fail'
-                    case.errorType = 'AssertionError'
-                    case.errorMessage = str(ex)
-
-                finally:
-                    #write report
-                    if self.result.errors or self.result.failures:
-                        case.status = 'fail'
-                        case.errorType = 'AssertionError'
-                        #print 'result  self.result.errors
-                        case.errorMessage = self.result.failures[0][1]
-                    self.writeReport(case)
-    '''
+            
     """
     def findTestMethodByClassName(self, classname):
         classPath = os.sep.join(classname.split('.')) + '.py'
@@ -163,8 +167,3 @@ class Runner(object):
         else:
             print "This is a method "
      """
-    '''
-    def _executeTest(self, suite):
-        self.result = self.runner.run(suite)
-    '''
-    

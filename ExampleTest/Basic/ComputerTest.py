@@ -19,11 +19,12 @@ class CalculatorTest(unittest.TestCase):
         self.cal = Calculator()
     
     def test_add(self):
-        print TestInputSingleton.caseconf
-        print self.__dict__, self.__class__
-        x = TestInputSingleton.caseconf.params['x']
-        x = TestInputSingleton.caseconf.params['y']
-        self.assertEqual(self.cal.add(1, 2), 3, 'test add func')
+        print TestInputSingleton.test_params
+        
+        x = TestInputSingleton.test_params['x']
+        y = TestInputSingleton.test_params['y']
+        
+        self.assertEqual(self.cal.add(x, y), 3, 'test add func')
     
     def test_sub(self):
         self.assertEqual(self.cal.sub(5, 2), 3, 'test sub func')

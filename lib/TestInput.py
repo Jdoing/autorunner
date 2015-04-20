@@ -1,3 +1,3 @@
 class TestInputSingleton():
-    sysconf = None
-    caseconf = None
+    test_params = {}
+    servers = []

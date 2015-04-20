@@ -50,7 +50,6 @@ class XUnitTestResult(object):
         # If params are passed to the test
         if "," in name:
             class_name = name
-        print 'status is %s' % status
         matched = False
         for suite in self.suites:
             if suite.name == class_name:
