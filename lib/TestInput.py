@@ -1,3 +1,3 @@
 class TestInputSingleton():
     test_params = {}
-    servers = []
+    ini_config = {}

@@ -4,51 +4,73 @@ import ConfigParser
 import re
 import logging
 import json
-from lib.exception import ConfigError
-from util.logger import log
+#from lib.exception import ConfigError
+#from util.logger import log
+from run import log
 
 __all__ = ['Case', 'SysConfig', 'CaseConfig']
-
+'''
 class Server(object):
     def __init__(self):
         self.ip = ''
         self.username = ''
         self.password = ''
         self.port = ''
-
+'''
 class SysConfig(object):
-    configParser = ConfigParser.ConfigParser()
-    
     def __init__(self):
         self.configname = ''
         #self.servers = []
         self.ini = {}
-        #self.parser = ConfigParser.ConfigParser()
 
     def parse_from_config(self, filename):
         self.configname = filename
-        if not Path.isfile(self.configname):
-            sys.exit('SysConfig file name is not a real file')
+        self.ini = self._parse_from_config(filename)
+    
+    def _parse_from_config(self, filename):
+        if not os.path.isfile(filename):
+            log.err('SysConfig file name is not a real file')
+            sys.exit(1)
         try:
-            #self.servers = self._parser_from_file()
-            for section in SysConfig.configParser.sections():
-                if section.lower() != 'subconf':
-                    self.ini[section] = dict(SysConfig.configParser.items(section))
+            configParser = ConfigParser.ConfigParser()
+            configParser.read(filename)
+            conf = {}
+            for section in configParser.sections():
+                #match IP, section is ip, item is node information
+                if re.match('^(\d{1,3}\.){3}?(\d{1,3})?$', section):
+                    conf[section] = self._get_node_conf(configParser, section)
+                else:
+                    conf[section] = dict(configParser.items(section))
+        except Exception, ex:
+            sys.exit(ex)
+        finally:
+            return conf
+            
+    def _get_node_conf(self, configParser, section):
+        nodeconf = 'subconf'
+        node = dict([item for item in configParser.items(section) if item[0] != nodeconf])
+        try:
+            node[nodeconf] = self._parse_from_config(configParser.get(section, nodeconf))
+        except:
+            pass
+        return node
+
+
+
+    '''
+    def __str__(self):
+        for key, value in self.ini:
+            print 'section is: '
+            for k, v in value:
+                if not isinstance(v, dict):
+                    print 'key is %s, value is %s' % k, v
                 else:
                     pass
-
-        except ConfigError, ex:
-            log.error(ex)
-            sys.exit('parse conf error')
-
-    def __str__(self):
-        for ele in self.ini:
-            
-        
+    '''
     '''
     def _parser_from_file(self):
-        SysConfig.configParser.read(self.configname)
-        sections = SysConfig.configParser.sections()
+        configParser.read(self.configname)
+        sections = configParser.sections()
         
         ips = []
         for section in sections:
@@ -58,7 +80,7 @@ class SysConfig(object):
                 pass
             #match IP, section is ip, item is server information
             elif re.match('^(\d{1,3}\.){3}?(\d{1,3})?$', section):
-                self._update_server(**dict(SysConfig.configParser.items(section), ip = section))
+                self._update_server(**dict(configParser.items(section), ip = section))
             else:
                 pass
     '''
@@ -72,11 +94,12 @@ class SysConfig(object):
         server.port = kwargs['port']
         self.servers.append(server)
     '''
-    
+    '''
     def _get_server_ips(self, section):
         #return map(lambda t : t[1], configParser.items(section))
-        return [item[1] for item in SysConfig.configParser.items(section)]
-
+        return [item[1] for item in configParser.items(section)]
+    '''
+    
 class Case(object):
     def __init__(self, name, time=0, errorType=None, errorMessage=None, status='pass', params={}):
         self.name = name
@@ -92,7 +115,7 @@ class CaseConfig(object):
         self.cases = []
     
     def parse_config(self, filename):
-        if not Path.exists(filename):
+        if not os.path.exists(filename):
             sys.exit('case config not exists!')
         
         self.configname = filename
@@ -108,8 +131,7 @@ class CaseConfig(object):
     
     def __str__(self):
         return str([('casename is: ' + case.name, 'params is: '+ str(case.params)) for case in self.cases])
-            
-    
+
     def _parse_line(self, line):
         splitline = line.split(',', 1)
         name = splitline[0]
@@ -118,7 +140,7 @@ class CaseConfig(object):
             try:
                 param_string = splitline[1].split('=', 1)
                 params = json.loads(param_string[1])
-            except ConfigError, ex:
+            except Exception, ex:
                 print 'parse params occur error'
                 raise ex
         self.update_cases(name = name, params = params)

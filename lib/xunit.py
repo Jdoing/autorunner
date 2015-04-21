@@ -1,5 +1,4 @@
 import xml.dom.minidom
-
 # a junit compatible xml example
 #<?xml version="1.0" encoding="UTF-8"?>
 #<testsuite name="nosetests" tests="1" errors="1" failures="0" skip="0">
@@ -29,8 +28,6 @@ class XUnitTestCaseError(object):
     def __init__(self):
         self.type = ""
         self.message = ""
-
-
 #
 # XUnitTestSuite has name , time , list of XUnitTestCase objects
 # errors : number of errors
@@ -75,8 +72,9 @@ class XUnitTestResult(object):
         testsuite.setAttribute('skip', str(suite.skips))
         for testobject in suite.tests:
             testcase = doc.createElement('testcase')
-            full_name = testobject.name+ str(testobject.params)
-            testcase.setAttribute('name', full_name)
+            full_name = testobject.name
+            testcase.setAttribute('name', full_name) 
+            testcase.setAttribute('params', str(testobject.params))
             testcase.setAttribute('time', str(testobject.time))
             if testobject.error:
                 error = doc.createElement('error')
