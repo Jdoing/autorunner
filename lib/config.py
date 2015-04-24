@@ -1,14 +1,14 @@
 import sys, os
+sys.path.append(os.path.join(os.getenv('SNTF_HOME'), 'lib'))
 from os import path as Path
 import ConfigParser
 import re
 import logging
 import json
-#from lib.exception import ConfigError
-#from util.logger import log
-from run import log
+import logger
 
-__all__ = ['Case', 'SysConfig', 'CaseConfig']
+log = logger.get_logger()
+
 '''
 class Server(object):
     def __init__(self):
@@ -19,17 +19,95 @@ class Server(object):
 '''
 class SysConfig(object):
     def __init__(self):
-        self.configname = ''
+        self.config_file = ''
         #self.servers = []
         self.ini = {}
 
     def parse_from_config(self, filename):
-        self.configname = filename
+        self.config_file = filename
         self.ini = self._parse_from_config(filename)
+        
+    def deal_file_path(self, fp, cur_path = os.getcwd()):
+        path = ''
+        if os.path.isabs(fp):
+            path = fp
+        else:
+            path = os.path.join(cur_path, fp) 
+        
+        if os.path.isfile(path):
+            return path
+        else:
+            log.error('[%s] file not exist!' % fp)
+            sys.exit(1)
+
+    def get_all(self, filename = None):
+        try:
+            if filename:
+                self.config_file = self.deal_file_path(filename)
+            configParser = ConfigParser.ConfigParser()
+            configParser.read(self.config_file)
+            conf = {}
+            
+            conf['GLOBAL'] = {k : self._parse_param(v) for k, v in configParser.items('GLOBAL')}
+            conf['NODES'] = {}
+            
+            nodes = dict(configParser.items('NODES'))
+            protype = conf['GLOBAL']['type']
+            
+            for section in configParser.sections():
+                if section.upper() == 'GLOBAL' or section.upper()  == 'NODES':
+                    continue
+                if section in nodes.values():
+                    conf['NODES'][section] = dict(general = {k : self._parse_param(v) for k, v in configParser.items(section) if k.upper() != 'CONF_FILE'})
+
+                    conf_file_path = configParser.get(section, 'CONF_FILE')
+                    single_node = self._get_single_node(conf_file_path, protype)
+                    conf['NODES'][section].update(single_node)
+        except Exception, ex:
+            log.error('parse ini config fail: %s' % str(ex))
+            sys.exit(1)
+        else:
+            return conf
     
+    def _get_single_node(self, conf_file_path, protype):
+        filename = self.deal_file_path(conf_file_path, os.path.dirname(self.config_file))
+        parser = ConfigParser.ConfigParser()
+        parser.read(filename)
+        
+        node = {}
+        for section in parser.sections():
+            pro_type, key = section.split('.')
+            if pro_type.lower() == protype:
+                node[key] = {k : self._parse_param(v) for k, v in parser.items(section)}
+            else:
+                continue
+        return node
+    
+    def _parse_param(self, value):
+        try:
+            return int(value)
+        except ValueError:
+            pass
+
+        try:
+            return float(value)
+        except ValueError:
+            pass
+
+        if value.lower() == "false":
+            return False
+
+        if value.lower() == "true":
+            return True
+        
+        if value.lower() == 'none':
+            return None
+
+        return value
+        
     def _parse_from_config(self, filename):
         if not os.path.isfile(filename):
-            log.err('SysConfig file name is not a real file')
+            log.error('SysConfig file name is not a real file')
             sys.exit(1)
         try:
             configParser = ConfigParser.ConfigParser()
@@ -69,7 +147,7 @@ class SysConfig(object):
     '''
     '''
     def _parser_from_file(self):
-        configParser.read(self.configname)
+        configParser.read(self.config_file)
         sections = configParser.sections()
         
         ips = []
@@ -99,7 +177,7 @@ class SysConfig(object):
         #return map(lambda t : t[1], configParser.items(section))
         return [item[1] for item in configParser.items(section)]
     '''
-    
+   
 class Case(object):
     def __init__(self, name, time=0, errorType=None, errorMessage=None, status='pass', params={}):
         self.name = name
@@ -111,18 +189,18 @@ class Case(object):
 
 class CaseConfig(object):
     def __init__(self):
-        self.configname = ''
+        self.config_file = ''
         self.cases = []
     
     def parse_config(self, filename):
         if not os.path.exists(filename):
             sys.exit('case config not exists!')
         
-        self.configname = filename
+        self.config_file = filename
         self._get_case_conf()
     
     def _get_case_conf(self):
-        with open(self.configname) as file:
+        with open(self.config_file) as file:
             for line in file:
                 line = line.strip()
                 if line.startswith('#') or len(line) <= 0:

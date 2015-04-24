@@ -24,7 +24,7 @@ class CalculatorTest(unittest.TestCase):
         x = TestInputSingleton.test_params['x']
         y = TestInputSingleton.test_params['y']
         
-        self.assertEqual(self.cal.add(x, y), 3, 'test add func')
+        self.assertEqual(self.cal.add(x, y), 5, 'test add func')
     
     def test_sub(self):
         self.assertEqual(self.cal.sub(5, 2), 3, 'test sub func')

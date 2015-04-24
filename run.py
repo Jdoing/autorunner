@@ -10,21 +10,22 @@ import time
 import os.path as Path
 from optparse import OptionParser
 
-if sys.hexversion < 0x02060000:
-    print "Testrunner requires version 2.6+ of python"
+if sys.hexversion < 0x02070000:
+    print "Testrunner requires version 2.7+ of python"
     sys.exit()
 #from util.logger import log
 
 from xunit import XUnitTestResult
-from config import *
+from config import Case, SysConfig, CaseConfig
 from TestInput import TestInputSingleton
-
+import logger
 
 if os.getenv('SNTF_HOME'):
-    logging.config.fileConfig(os.path.join(os.getenv('SNTF_HOME'), 'selfconf', 'logging.conf'))
+    print 'root_dir is: %s' % os.getenv('SNTF_HOME')
 else:
     sys.exit('SNTF_HOME is not set')
-log = logging.getLogger('SNTF')
+
+log = logger.get_logger()
 
 class ArgParser(object):
     def __init__(self):
@@ -50,6 +51,8 @@ class ArgParser(object):
         if not any((self.options.casename, self.options.caseconf)):
             self.parser.print_usage()
             sys.exit('error: you can not run without inputing casename or caseconf!')
+
+
 
 class Runner(object):
     def __init__(self, argParser, verbose = 2):
@@ -107,7 +110,7 @@ class Runner(object):
                     self.result = self.runner.run(self.suite)
                 except Exception, ex:
                     case.status = 'fail'
-                    case.errorType = type(ex)
+                    case.errorType = type(ex).__name__
                     case.errorMessage = str(ex)
                 finally:
                     #write report
@@ -149,7 +152,24 @@ class Runner(object):
             case = Case(name)
             self.tests.append(case)
             
-
+    def getTestCaseByDir(self, dir_path):
+        if not os.path.isdir(dir_path):
+            print '[%s] is not dir' % dir_path
+            sys.exit(1)
+        
+        for dirname, subdirs, files in os.walk(dir_path):
+            for test_file in files:
+                if re.match('^.*\.py$', test_file):
+                    file_name = os.path.join(dirname, test_file)
+                    self.tests.extend(self.getTestCaseByFile(file_name))
+                    
+                    
+    
+    def getTestCaseByFile(self, file_name):
+        
+        module_name = test_file[:test_file.rfind('.')]
+        
+        
 
 def main():
     #parse command line args

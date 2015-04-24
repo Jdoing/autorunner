@@ -1,11 +1,14 @@
 import os, sys
+import logger
 
-def _getWorkdir():
-    curPath = os.path.abspath(__file__)
-    updir = os.path.dirname(curPath)
-    return os.path.dirname(updir)
+log1 = logger.get_logger()
+log1.debug('log1 id is %d' % id(log1))
     
-workdir = _getWorkdir()
+log2 = logger.get_logger()
+log2.debug('log1 id is %d' % id(log2))
 
+import logger
+print 'end'
 
-__all__ = [workdir, ]
+log2 = logger.get_logger()
+log2.debug('log1 id is %d' % id(log2))

@@ -21,9 +21,9 @@ class CaseConfigTest(unittest.TestCase):
 class SysConfigTest(unittest.TestCase):
     def test_parseConfig(self):
         conf = SysConfig()
-        conf_path = r'/home/jiangyu/github/autorunner/sysconf/multiple.ini'
-        conf.parse_from_config(conf_path)
-        print str(conf.ini)
+        conf_path = r'/home/jiangyu/github/autorunner/sysconf/3-nodes-cluster.ini'
+        print conf.get_all(conf_path)
+        #print str(conf.ini)
         #for i in conf.ini:
          #   print i, conf.ini[i]
 
