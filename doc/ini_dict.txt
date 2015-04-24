@@ -1,0 +1,47 @@
+{
+  "GLOBAL": {
+    "type": "cassandra",
+    "name": "TestCluster",
+    "home": "/schooner/backup/example",
+    "svn_trunk": "https://10.196.60.217/svn/schooner-trunk/ht_delivery/qa/example",
+    "svn_revision": 21007,
+    ...
+  },
+  "NODES": {
+    "node_1_name": {
+      "general": {
+        "ip": "10.197.23.8",
+        "username": "root",
+        "password": "northscale!23",
+        "port": 8091,
+        "home": "/schooner/backup/example/node_1_name",
+        "java_home": "/etc/some/where"
+        "use_vip": true,
+        "mask": 20,
+        ...
+      },
+      "yaml": {
+        "auto_bootstrap": false,
+        "initial_token": null,
+        "rpc_address": "10.197.23.8",
+        "rpc_port": 9160,
+        "listen_address": "10.197.23.8",
+        "storage_port": 7000,
+        ...
+      },
+      "env": {
+        "jmx_port": 7000,
+        "remote_debug_port": null,
+        ...
+      },
+      "log4j": {
+        "log_level": "INFO",
+        ...
+      },
+      ...
+    },
+    "node_2_name": {...},
+    "node_3_name": {...},
+    ...
+  },
+}
