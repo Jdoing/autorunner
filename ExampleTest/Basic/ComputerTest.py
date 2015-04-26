@@ -1,8 +1,9 @@
 #!/usr/bnin/python
 import sys, os
 import unittest
-#sys.path.append(r'/home/jiangyu/github/autorunner/Example')
-
+sys.path.append(r'/home/jiangyu/github/autorunner/Example')
+from Computer import Calculator
+'''
 if os.getenv('SNTF_HOME'):
     sys.path.append(os.path.join(os.getenv('SNTF_HOME'), 'Example'))
     sys.path.append(os.path.join(os.getenv('SNTF_HOME'), 'lib'))
@@ -13,18 +14,17 @@ if os.getenv('SNTF_HOME'):
 else:
     print 'SNTF_HOME env is not set'
     sys.exit('SNTF_HOME env is not set')
+'''
+
+x = 10
 
 class CalculatorTest(unittest.TestCase):
     def setUp(self):
         self.cal = Calculator()
     
     def test_add(self):
-        print TestInputSingleton.test_params
         
-        x = TestInputSingleton.test_params['x']
-        y = TestInputSingleton.test_params['y']
-        
-        self.assertEqual(self.cal.add(x, y), 5, 'test add func')
+        self.assertEqual(self.cal.add(2, 3), 5, 'test add func')
     
     def test_sub(self):
         self.assertEqual(self.cal.sub(5, 2), 3, 'test sub func')
